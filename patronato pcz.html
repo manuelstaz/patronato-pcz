@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Patronato Zacualpan</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f0f4f8;
+      color: #333;
+    }
+    header {
+      background-color: #002147;
+      color: #fff;
+      padding: 2rem;
+      text-align: center;
+    }
+    .frase {
+      font-size: 1.5rem;
+      animation: fade 2s infinite alternate;
+    }
+    @keyframes fade {
+      0% {opacity: 0;}
+      100% {opacity: 1;}
+    }
+    .botones {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      padding: 1rem;
+      background-color: #003366;
+    }
+    .botones button {
+      background-color: #f4c430;
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 10px;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .seccion {
+      display: none;
+      padding: 2rem;
+      max-width: 800px;
+      margin: auto;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .seccion h2 {
+      color: #002147;
+    }
+    .activo {
+      display: block;
+    }
+    label, input, select, textarea {
+      display: block;
+      width: 100%;
+      margin-top: 1rem;
+      font-size: 1rem;
+    }
+    input, select, textarea {
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    button.generar {
+      background-color: #002147;
+      color: white;
+      margin-top: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Patronato Zacualpan Pro-equipamiento de Protección Civil</h1>
+    <div class="frase" id="fraseMotivadora"></div>
+  </header>
+
+  <div class="botones">
+    <button onclick="mostrarSeccion('quienes')">¿QUIÉNES SOMOS?</button>
+    <button onclick="mostrarSeccion('mesa')">MESA DIRECTIVA</button>
+    <button onclick="mostrarSeccion('donador')">HAZTE DONADOR DE UN PESO POR DÍA</button>
+  </div>
+
+  <section id="quienes" class="seccion">
+    <h2>¿Quiénes somos?</h2>
+    <p>Somos un grupo de voluntarios [...]</p>
+    <h2>Misión</h2>
+    <p>Unirnos en este patronato [...]</p>
+    <h2>Visión</h2>
+    <p>Miramos un Zacualpan unido [...]</p>
+    <h2>Valores</h2>
+    <ul>
+      <li>Ética profesional</li>
+      <li>Empatía</li>
+      <li>Diversidad</li>
+      <li>Honestidad</li>
+      <li>Responsabilidad</li>
+    </ul>
+  </section>
+
+  <section id="mesa" class="seccion">
+    <h2>Formulario de Tesorería</h2>
+    <form id="formTesoreria">
+      <label>Nombre completo: <input type="text" id="nombre" required></label>
+      <label>Teléfono: <input type="tel" id="telefono" required></label>
+      <label>Población: <input type="text" id="poblacion" required></label>
+      <label>Cantidad que donará por mes: <input type="number" id="cuotaMensual" required></label>
+      <label>Ingreso en pesos hoy: <input type="number" id="ingresoHoy" required></label>
+      <label>Forma de pago: <input type="text" id="formaPago" required></label>
+      <button type="button" class="generar" onclick="generarReciboPDF()">Generar Recibo</button>
+    </form>
+  </section>
+
+  <section id="donador" class="seccion">
+    <h2>Hazte Donador</h2>
+    <p>Formulario de registro en construcción.</p>
+  </section>
+
+  <script>
+    const frases = [
+      "Tu apoyo equipa a nuestros héroes voluntarios",
+      "Un pueblo unido es un pueblo fuerte",
+      "Cada peso cuenta para salvar vidas"
+    ];
+    let fraseIndex = 0;
+    setInterval(() => {
+      document.getElementById('fraseMotivadora').textContent = frases[fraseIndex];
+      fraseIndex = (fraseIndex + 1) % frases.length;
+    }, 2000);
+
+    function mostrarSeccion(id) {
+      document.querySelectorAll('.seccion').forEach(s => s.classList.remove('activo'));
+      document.getElementById(id).classList.add('activo');
+    }
+
+    let folio = 1;
+    const frasesAgradecimiento = [
+      "Gracias por ser parte del cambio.",
+      "Tu generosidad salva vidas.",
+      "Unidos, logramos más.",
+      "Juntos equipamos a nuestros héroes.",
+      "Cada peso cuenta.",
+      "Tu ayuda hace la diferencia.",
+      "Gracias por confiar en nosotros.",
+      "Eres parte de la solución.",
+      "Solidaridad que inspira.",
+      "Tu apoyo transforma realidades.",
+      "Seguimos adelante gracias a ti.",
+      "Tu cooperación enciende esperanza."
+    ];
+
+    async function generarReciboPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      const nombre = document.getElementById("nombre").value;
+      const cantidad = document.getElementById("ingresoHoy").value;
+      const formaPago = document.getElementById("formaPago").value;
+      const fecha = new Date().toLocaleDateString();
+      const frase = frasesAgradecimiento[Math.floor(Math.random() * frasesAgradecimiento.length)];
+
+      doc.setLineWidth(0.5);
+      doc.setDrawColor(0, 0, 255);
+      doc.rect(10, 10, 180, 80);
+      doc.setDrawColor(255, 204, 0);
+      doc.rect(13, 13, 174, 74);
+
+      doc.setFontSize(14);
+      doc.text("RECIBO DE DONACIÓN", 75, 25);
+
+      doc.setFontSize(12);
+      doc.text(`Fecha: ${fecha}`, 20, 35);
+      doc.text(`Recibí de: ${nombre}`, 20, 45);
+      doc.text(`Cantidad: $${cantidad}`, 20, 55);
+      doc.text(`Forma de pago: ${formaPago}`, 20, 65);
+      doc.text(`Recibido por Tesorera - Patronato Zacualpan`, 20, 75);
+      doc.text(`Folio: ${folio.toString().padStart(3, '0')}`, 150, 75);
+
+      doc.setFontSize(10);
+      doc.text(frase, 20, 85);
+
+      // Firma (temporal: logo o firma base64 opcional)
+      // doc.addImage("URL_O_BASE64_FIRMA", "PNG", 140, 60, 30, 15);
+
+      doc.save(`Recibo_${folio.toString().padStart(3, '0')}.pdf`);
+      folio++;
+    }
+  </script>
+</body>
+</html>
